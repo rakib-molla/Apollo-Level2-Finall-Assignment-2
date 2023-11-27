@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
-import { Address, FullName, IUser, Orders } from "./user.interface";
-
+import { Address, FullName, IUser, Orders, IUserModel } from "./user.interface";
+import bcrypt from 'bcrypt'
+import config from '../../config/index'
 
 const fullNameSchema = new Schema<FullName>({
  firstName:{
@@ -25,7 +26,7 @@ const OrdersSchema = new Schema<Orders>({
  quantity: { type: Number,}
 })
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<IUser, IUserModel>({
  userId: {
   type: Number, 
   required: [true, 'user id required'],
@@ -54,4 +55,28 @@ const userSchema = new Schema<IUser>({
  orders: [OrdersSchema]
 })
 
-export const UserModel = model<IUser>('User', userSchema);
+// pre save middleware / hook: will work on create() save()
+userSchema.pre('save', async function (next) {
+ // console.log(this, 'pre hook: we will save to data');
+ const user = this; // this refer for document
+ user.password = await bcrypt.hash(
+   user.password,
+   Number(config.BCRYPT_SALT_ROUNDS),
+ );
+ next();
+});
+
+// post middleware
+userSchema.post('save', function (doc, next) {
+ doc.password = '***';
+ // console.log( 'post hook: we save to data');
+ next();
+});
+
+// creating a custom static method
+userSchema.statics.isUserExists = async function(userId: number){
+ const existingUser = await UserModel.findOne({userId});
+ return existingUser;
+}
+
+export const UserModel = model<IUser, IUserModel>('User', userSchema);
