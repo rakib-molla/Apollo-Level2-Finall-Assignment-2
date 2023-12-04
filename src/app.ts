@@ -5,7 +5,7 @@ import { UserRouter } from './modules/user/user.route';
 const app: Application = express();
 
 
-//parser--
+//parser
 app.use(express.json());
 app.use(cors());
 
