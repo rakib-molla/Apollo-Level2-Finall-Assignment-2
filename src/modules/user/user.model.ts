@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { TAddress, TFullName, TOrrder, TUser } from './user.interface';
-
+import config from '../../config';
+import bcrypt from 'bcrypt';
 
 const fullNameSchema = new Schema<TFullName>({
   firstName: {
@@ -85,5 +86,21 @@ const userSchema = new Schema<TUser>({
   },
   orders: [ordersSchema],
 });
+
+// hash password
+userSchema.pre('save', async function (next) {
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.BCRYPT_SALT_ROUNDS),
+  );
+  next();
+});
+
+// pose save middleware/ hook
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
+
 
 export const UserModel = model<TUser>('User', userSchema);
