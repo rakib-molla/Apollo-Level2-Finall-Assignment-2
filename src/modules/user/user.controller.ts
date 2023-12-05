@@ -182,6 +182,30 @@ const addProductToUser = async (req: Request, res: Response) => {
   }
 };
 
+const getUserOrders = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.userId);
+
+  try {
+    const user = await UserServices.getUserSpecifyOrder(userId);
+
+    if (user) {
+      const userOrders = user.orders || [];
+      res.json({
+        success: true,
+        message: 'Order fetched successfully!',
+        data: {
+          orders: userOrders,
+        }
+      });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 export const UserControllers = {
   user,
   getaAllUsers,
@@ -189,4 +213,5 @@ export const UserControllers = {
   deleteSingleUser,
   updateSingleUser,
   addProductToUser,
+  getUserOrders,
 };

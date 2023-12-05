@@ -1,4 +1,3 @@
-
 import { TOrrder, TUser } from './user.interface';
 import { UserModel } from './user.model';
 
@@ -37,6 +36,16 @@ const addProductToUserDB = async (id: number, order: TOrrder) => {
   return result;
 };
 
+const getUserSpecifyOrder = async (userId: number) => {
+  try {
+    const user = await UserModel.findOne({ userId: userId });
+
+    return user;
+  } catch (error) {
+    throw new Error('Error fetching user from the database');
+  }
+};
+
 export const UserServices = {
   creatUserIntoDB,
   getAllUsersFormDB,
@@ -44,4 +53,5 @@ export const UserServices = {
   deleteAUserFromDB,
   updateSingleUserFromDB,
   addProductToUserDB,
+  getUserSpecifyOrder,
 };

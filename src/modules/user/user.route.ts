@@ -16,4 +16,6 @@ router.put('/:userId', UserControllers.updateSingleUser);
 
 router.put('/:userId/orders', UserControllers.addProductToUser);
 
+router.get('/:userId/orders', UserControllers.getUserOrders);
+
 export const UserRouter = router;
