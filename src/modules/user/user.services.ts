@@ -2,10 +2,7 @@ import { TOrrder, TUser } from './user.interface';
 import { UserModel } from './user.model';
 
 const creatUserIntoDB = async (user: TUser) => {
-  // built-in ----static method----
-  if (await UserModel.isUserExists(user.userId)) {
-    throw new Error('User is already exists!!!!');
-  }
+ 
   const result = await UserModel.create(user);
   return result;
 };
