@@ -46,6 +46,27 @@ const getUserSpecifyOrder = async (userId: number) => {
   }
 };
 
+const getTotalPriceForUser = async (userId: number) => {
+  try {
+      
+
+      const user = await UserModel.findOne({ userId: userId });
+
+      if (user) {
+          const userOrders = user.orders || [];
+          const totalPrice = userOrders.reduce((acc, order) => acc + order.price * order.quantity, 0);
+
+         
+          return totalPrice;
+      } else {
+          throw new Error('User not found');
+      }
+  } catch (error) {
+      console.error(error);
+      throw new Error('Error calculating total price');
+  }
+};
+
 export const UserServices = {
   creatUserIntoDB,
   getAllUsersFormDB,
@@ -54,4 +75,5 @@ export const UserServices = {
   updateSingleUserFromDB,
   addProductToUserDB,
   getUserSpecifyOrder,
+  getTotalPriceForUser
 };
