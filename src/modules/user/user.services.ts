@@ -2,6 +2,10 @@ import { TOrrder, TUser } from './user.interface';
 import { UserModel } from './user.model';
 
 const creatUserIntoDB = async (user: TUser) => {
+  // built-in ----static method----
+  if (await UserModel.isUserExists(user.userId)) {
+    throw new Error('User is already exists!!!!');
+  }
   const result = await UserModel.create(user);
   return result;
 };
@@ -56,13 +60,11 @@ const getTotalPriceForUser = async (userId: number) => {
           const userOrders = user.orders || [];
           const totalPrice = userOrders.reduce((acc, order) => acc + order.price * order.quantity, 0);
 
-         
           return totalPrice;
       } else {
           throw new Error('User not found');
       }
   } catch (error) {
-      console.error(error);
       throw new Error('Error calculating total price');
   }
 };

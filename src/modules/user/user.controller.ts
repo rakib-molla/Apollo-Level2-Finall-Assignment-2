@@ -25,12 +25,14 @@ const user = async (req: Request, res: Response) => {
       message: 'User created successfully!',
       data: UserResponseCustomize,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({
       success: false,
-      code: 404,
-      message: 'User not found',
-      error: error,
+      message: 'Something Went to Wrong',
+      error: {
+        code: 500,
+        description: error.message,
+      },
     });
   }
 };
